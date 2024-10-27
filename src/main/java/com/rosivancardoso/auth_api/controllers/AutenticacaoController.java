@@ -1,6 +1,8 @@
 package com.rosivancardoso.auth_api.controllers;
 
 import com.rosivancardoso.auth_api.dtos.AuthDto;
+import com.rosivancardoso.auth_api.dtos.RequestRefreshDto;
+import com.rosivancardoso.auth_api.dtos.TokenResponseDto;
 import com.rosivancardoso.auth_api.services.AutenticacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,12 +22,18 @@ public class AutenticacaoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public String auth(@RequestBody AuthDto authDto) {
-
+    public TokenResponseDto auth(@RequestBody AuthDto authDto) {
         var usuarioAutentication = new UsernamePasswordAuthenticationToken(authDto.login(), authDto.senha());
 
         this.authenticationManager.authenticate(usuarioAutentication);
 
         return this.autenticacaoService.obterToken(authDto);
+    }
+
+
+    @PostMapping("/refresh-token")
+    @ResponseStatus(HttpStatus.OK)
+    public TokenResponseDto authRefreshToken(@RequestBody RequestRefreshDto requestRefreshDto) {
+        return this.autenticacaoService.obterRefreshToken(requestRefreshDto.refreshToken());
     }
 }
